@@ -1,0 +1,30 @@
+---
+title: "ReproducibleResearchProject2"
+author: "Zheng Wu"
+date: "May 31, 2015"
+output: html_document
+---
+#Consequences of Weather Events
+##Synopsis
+This report studies what event causes most damage to human and property.
+
+
+
+##Loading and Processing the Raw Data
+```{r, cache=TRUE, message=FALSE}
+download.file("http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", "./repdata-data-StormData.csv.bz2")
+data <- read.csv("./repdata-data-StormData.csv.bz2")
+relevantData <- data[, c("EVTYPE", "FATALITIES", "INJURIES", "PROPDMG", "PROPDMGEXP", "CROPDMG", "CROPDMGEXP")]
+library(dplyr)
+grouped <- group_by(relevantData, EVTYPE)
+```
+
+##Results
+```{r, cache =TRUE, fig.height= 16, fig.width=20}
+summary <- summarise(grouped, meanFatalities = mean(FATALITIES), meanInjuries = mean(INJURIES), meanPropDMG = mean(PROPDMG), meanCropDMG = mean(CROPDMG))
+par(mfrow= c(4,1))
+barplot(as.matrix(summary[which.max(summary$meanFatalities),][,2:5]), names = c("Mean Fatalities", "Mean Injuries", "Mean Property Damage", "Mean Crop Damage"), ylab = "Value", main = "Event Type That Has the Most Mean Fatalities: TORNADOES, TSTM WIND, HAIL")
+barplot(as.matrix(summary[which.max(summary$meanInjuries),][,2:5]), names = c("Mean Fatalities", "Mean Injuries", "Mean Property Damage", "Mean Crop Damage"), ylab = "Value", main = "Event Type That Has the Most Mean Injuries: Heat Wave")
+barplot(as.matrix(summary[which.max(summary$meanPropDMG),][,2:5]), names = c("Mean Fatalities", "Mean Injuries", "Mean Property Damage", "Mean Crop Damage"), ylab = "Value", main = "Event Type That Has the Most Mean Property Damage: COASTAL EROSION")
+barplot(as.matrix(summary[which.max(summary$meanCropDMG),][,2:5]), names = c("Mean Fatalities", "Mean Injuries", "Mean Property Damage", "Mean Crop Damage"), ylab = "Value", main = "Event Type That Has the Most Mean Crop Damage: DUST STORM/HIGH WINDS")
+```
